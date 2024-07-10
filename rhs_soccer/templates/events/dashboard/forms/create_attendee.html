@@ -1,0 +1,14 @@
+<div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Create Attendee</h5>
+
+      <!-- General Form Elements -->
+      <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Create Attendee</button>
+        <a href="#">Cancel</a>
+    </form>
+
+    </div>
+  </div>

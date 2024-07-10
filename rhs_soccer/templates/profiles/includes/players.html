@@ -1,0 +1,52 @@
+{% load static %}
+<div class="rainbow-team-area rainbow-section-gap">
+    <div class="wrapper plr--65">
+        <div class="row mb--20">
+            <div class="col-lg-12">
+                <div class="section-title text-center" data-sal="slide-up" data-sal-duration="700" data-sal-delay="150">
+                    <h4 class="subtitle "><span class="theme-gradient">Players.</span></h4>
+                    <h2 class="title w-600 mb--20">Our Players</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row row--15">
+            {% if players %}
+            {% for player in players %}
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12 mt--30" data-sal="slide-up" data-sal-duration="700">
+                <div class="rainbow-team team-style-three">
+                    <div class="inner">
+                        <a href="{% url 'profiles:player' player.id %}">
+                            <div class="thumbnail"><img src="
+                                {% if player.profile.avatar %}
+                                {{ player.profile.avatar.url }}
+                                {% else %}
+                                {% static 'images/defaults/profile_pic_default_1055x1050.png' %}
+                                {% endif %}
+                                " alt="{{ player.profile.get_full_name }} avatar">
+                            </div>
+                        </a>
+                        <div class="content">
+                            <div class="team-info">
+                                <h2 class="title">
+                                        {{ player.profile.user.get_full_name }}
+                                </h2>
+                                <h6 class="subtitle theme-gradient">
+                                        {{ player.position }}
+                                </h6>
+                                <div class="team-form"><span class="location">{{ player.team.short_name}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="col-lg-12">
+                <div class="section-title text-center" data-sal="slide-up" data-sal-duration="700" data-sal-delay="150">
+                    <h4 class="subtitle "><span class="theme-gradient">Players.</span></h4>
+                    <h2 class="title w-600 mb--20">No Players Found</h2>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

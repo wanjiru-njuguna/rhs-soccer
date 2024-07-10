@@ -1,0 +1,23 @@
+{% load static solo_tags %}
+{% get_solo 'core.SiteSettings' as site_settings %}
+
+  <div class="slider-area slider-style-2 variation-2 height-850 bg_image bg_image--10">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-xl-6">
+                <div class="inner text-left">
+                    <h1 class="title display-one">Welcome to <br> <strong>{% if site_settings.name %}</strong>
+                      <span>{{ site_settings.name }}</span>
+                      {% else %}
+                      Site Name not set
+                      {% endif %}</h1>
+                    <h6 class="tag-title">  {% if site_settings.tagline %}
+                      {{ site_settings.tagline }}
+                      {% else %}
+                      Site Tagline not set
+                      {% endif %}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

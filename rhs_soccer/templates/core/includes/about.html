@@ -1,0 +1,42 @@
+{% load static solo_tags %}
+{% get_solo 'core.SiteSettings' as site_settings %}
+
+<div class="about-area about-style-4 rainbow-section-gap">
+    <div class="container">
+        <div class="row row--40 align-items-center">
+            <div class="col-lg-6">
+                <div class="video-btn">
+                    <div class="video-popup icon-center">
+                        <div class="overlay-content">
+                            <div class="thumbnail"><img class="radius-small" src="{% static 'images/defaults/contact_image_615x560.png' %}" alt="Corporate Image"></div>
+                            <div class="video-icon">
+                                <a class="btn-default rounded-player popup-video" href="https://www.youtube.com/watch?v=tj9-MGHCs38">
+                                    <span><i class="feather-play"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="video-lightbox-wrapper"></div>
+                </div>
+            </div>
+            <div class="col-lg-6 mt_md--40 mt_sm--40">
+                <div class="content">
+                    <div class="inner">
+                        <h3 class="title">About {{ site_settings.name }}<br><strong>{{ about_page.subtitle }}</strong></h3>
+                        <div class="title-wrapper">
+                            <h4 class="title"> 
+                                {% if about_page.subtitle %}
+                                <p>{{ about_page.subtitle }}</p>
+                                {% endif %}
+                            </h4>
+                            <p class="text"> 
+                                {% if about_page.subtitle %}
+                                <p>{{ about_page.content|safe }}</p>
+                                {% endif %}
+                            </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

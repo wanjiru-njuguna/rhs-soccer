@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %} Events {% endblock title %}
+
+{% block content %}
+    {% include 'core/layouts/theme_style.html' %}
+    {% include 'core/layouts/separator.html' %}
+    {% include 'core/layouts/breadcrumb.html' %}
+    {% comment %} {% include 'events/includes/event_filters.html' %} {% endcomment %}
+    {% include 'events/includes/events.html' %}
+{% endblock content %}

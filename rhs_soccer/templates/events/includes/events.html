@@ -1,0 +1,70 @@
+{% load static %}
+<div class="main-content">
+    <div class="rainbow-blog-area rainbow-section-gap">
+        <div class="container">
+            <h2 class="title w-600 mb--20">Upcoming Events</h2>
+            <div class="row mt_dec--30">
+                <div class="col-lg-12">
+                    <div class="row row--15">
+                        {% if events %}
+                        {% for event in events %}
+                        <div class="col-lg-4 col-md-6 col-12 mt--30" data-sal="slide-up" data-sal-duration="700">
+                            <div class="rainbow-card box-card-style-default">
+                                <div class="inner">
+                                    <div class="thumbnail"><a class="image" href="{% url 'events:event' event.slug %}"><img class="w-100" src="
+                                        {% if event.image %}
+                                        {{ event.image.url }}
+                                        {% else %}
+                                        {% static 'images/defaults/blog_list_header_390x240.png' %}
+                                        {% endif %}"
+                                        alt="{{ event.title }} picture"></a>
+                                    </div>
+                                    <div class="content">
+                                        <ul class="rainbow-meta-list">
+                                            <li><strong>When</strong></li>
+                                            <li class="separator">/</li>
+                                            <li>{{ event.start_date|date}} @ {{ event.start_date|time}} </li>
+                                            {% if event.start_date|date == event.end_date|date %}
+                                            <li> - {{ event.end_date|time }}</li>
+                                            {% elif event.end_date %}
+                                            <li> <strong>to</strong>  {{ event.end_date|date}} @ {{ event.end_date|time}} </li>
+                                            {% endif %}
+                                        </ul>
+                                        <h4 class="title"><a href="{% url 'events:event' event.slug %}">{{ event.title }}</a></h4>
+                                        <p class="">{{ event.short_description }}</p>
+                                    </div>
+                                    {% if event.is_paid and event.start_date >= now %}
+                                    <div class="content">
+                                        <span class="rainbow-meta-list">Price: ${{ event.price }}</span>
+                                        <a class="btn-default" href="#">Buy Ticket</a>
+                                    </div>
+                                    {% elif not event.is_paid and event.start_date >= now %}
+                                    <div class="content">
+                                        <span class="rainbow-meta-list">Price: FREE </span>
+                                    </div>
+                                {% endif %}
+                                </div>
+                                {% if event.need_volunteers %}
+                                {% include 'events/includes/volunteers_needed.html' %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="content">
+                            <h4 class="title">No Events Found</h4>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-12 text-center">
+                    <div class="rainbow-load-more text-center mt--60">
+                        <a class="btn-default" href="blog-grid.html">Past Events
+                            <i class="feather-loader"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

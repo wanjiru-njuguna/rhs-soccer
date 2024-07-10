@@ -1,0 +1,39 @@
+{% load static solo_tags %}
+{% get_solo 'core.SponsorPage' as sponsor_page %}
+
+  <div class="rainbow-brand-area rainbow-section-gap">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title text-center" data-sal="slide-up" data-sal-duration="700" data-sal-delay="100">
+                    <h4 class="subtitle "><span class="theme-gradient">{{ sponsor_page.heading }}</span></h4>
+                    <h2 class="title w-600 mb--20">{{ sponsor_page.subtitle }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mt--10">
+                <ul class="brand-list brand-style-2">
+                  {% for sponsor in sponsors %}
+                  {% if sponsor.level == "Platinum" %}
+                    <li><a href="{{sponsor.url}}" target="_blank"><img src="
+                      {% if sponsor.logo %}
+                      {{ sponsor.logo.url }}
+                      {% else %}
+                      {% static 'images/clients/client-1.png' %}
+                      {% endif %}
+                      " class="img-fluid" alt="{{ sponsor.name }} logo "></a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-lg-12 text-center mt--50">
+                <h3 class="mb--20">{{ sponsor_page.cta }}</h3>
+                <a href="#" class="btn btn-default">Become a Sponsor</a>
+                <div class="rainbow-separator"></div>
+                <p class="mb--20">{{ sponsor_page.content|safe }}</p>
+            </div>
+        </div>
+    </div>
+</div>

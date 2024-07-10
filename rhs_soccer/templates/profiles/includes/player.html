@@ -1,0 +1,70 @@
+{% load static %}
+
+<div class="rainbow-portfolio-details rainbow-section-gap">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="inner">
+                    <div class="details-list">
+                        <div class="thumbnail player_image"><img class="radius w-100" src="
+                            {% if player.get_avatar %}
+                                {{ player.get_avatar.url }}
+                            {% else %}
+                                {% static 'images/defaults/profile_pic_default_1055x1050.png' %}
+                            {% endif %}" alt="{{ player.user.first_name }}' image
+                            "></div>
+                        <div class="row mt--40 row--30">
+                            <div class="col-lg-6">
+                                <div class="content-left">
+                                    <h4 class="title">{{ player.get_full_name}}</h4>
+                                    <div class="single-list-wrapper">
+                                        <div class="single-list"><label>Position:</label><span>
+                                            {{ player.position }}
+                                        </div>
+                                        <div class="single-list"><label>Jersey Number:</label><span>
+                                            {{ player.jeresy_number }}
+                                        </span></div>
+                                        <div class="single-list">
+                                            <label>Season:</label><span>
+                                                {{ player.team.season }}
+                                            </span>
+                                        </div>
+                                        <div class="single-list">
+                                            <label>Grade:</label><span>
+                                                {{ player.grade }}
+                                            </span>
+                                        </div>
+                                        <div class="single-list">
+                                            <label>Status:</label><span>
+                                                {{ player.status }}
+                                            </span>
+                                        </div>
+                                        <div class="single-list">
+                                            <label>Team:</label><span>
+                                                {{ player.team.short_name }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mt_md--30 mt_sm--30">
+                                <div class="content-right">
+                                    <h5 class="subtitle">About {{ player.profile.user.first_name }}</h5>
+                                    <div class="description">
+                                        <p>{{ player.bio|safe }}
+                                        </p>
+                                    </div>
+                                    <div class="description">
+                                        {% if player.team.fundraiser %}
+                                        {% include 'profiles/includes/donation.html' %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

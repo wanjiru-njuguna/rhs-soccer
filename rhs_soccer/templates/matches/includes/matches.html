@@ -1,0 +1,83 @@
+{% load static %}
+
+<div class="main-content">
+    <div class="rainbow-blog-area rainbow-section-gap">
+        <div class="container">
+            <div class="row mt_dec--30">
+                <div class="col-lg-12">
+                    {% comment %} <h2 class="title w-600 mb--20">
+                        {% if not finished %}
+                        Upcoming Matches
+                        {% elif finished %}
+                        Past Matches
+                        {% else %}
+                        Today's Matches
+                        {% endif %}
+                    </h2> {% endcomment %}
+                    <div class="row row--15">
+                        {% if matches %}
+                        {% for match in matches %}
+                        <div class="col-lg-4 col-md-6 col-12 mt--30" data-sal="slide-up" data-sal-duration="700">
+                            <div class="rainbow-card box-card-style-default">
+                                <div class="inner">
+                                    <div class="thumbnail">
+                                        <a class="image" href="{% url 'matches:match' match.uuid %}">
+                                            <img class="w-100" src="
+                                            {% if match.home_team.image %}
+                                            {{ match.home_team.image.url }}
+                                            {% else %}
+                                            {% static 'images/defaults/blog_list_header_390x240.png' %}
+                                            {% endif %}
+                                            " alt="{{ match.home_team.short_name }} team picture">
+                                        </a>
+                                    </div>
+                                    <div class="content">
+                                        <ul class="rainbow-meta-list">
+                                            <li><a href="#">Date</a></li>
+                                            <li class="separator">/</li>
+                                            <li>{{ match.date }} @ {{ match.time }}</li>
+                                        </ul>
+                                        <ul class="rainbow-meta-list">
+                                            <li>Location</a></li>
+                                            <li class="separator">/</li>
+                                            <a href="#"><li><strong>{{ match.venue.name }}</strong></li></a>
+                                        </ul>      
+                                        <h4 class="title">
+                                            <span class="subtitle theme-gradient">{{match.home_team.short_name}}</span> 
+                                            <sub>vs.</sub> 
+                                            <br><small>{{match.away_team.short_name}}</small> 
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="content">
+                            <h4 class="title">No Matches Found</h4>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-12 text-center">
+                    {%  if finished %}
+                    <div class="rainbow-load-more text-center mt--60">
+                        <a class="btn-default" href="{% url 'matches:matches' %}">Upcoming Matches
+                            <i class="feather-loader"></i>
+                        </a>
+                    </div>
+                    {% elif upcoming  %}
+                    {{ finished }}
+                    <div class="rainbow-load-more text-center mt--60">
+                        <a class="btn-default" href="{% url 'matches:past_matches' %}">Past Matches
+                            <i class="feather-loader"></i>
+                        </a>
+                    </div>
+                    {% elif today %}
+
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

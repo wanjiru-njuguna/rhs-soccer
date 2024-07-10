@@ -1,0 +1,134 @@
+{% load  static solo_tags %}
+{% get_solo 'core.SiteSettings' as site_settings %}
+{% get_solo 'core.SocialMedia' as social_media %}
+  <footer class="rainbow-footer footer-style-default footer-style-1">
+    <div class="footer-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="rainbow-footer-widget">
+                        <div class="logo">
+                            <a href="{% url 'core:home' %}">
+                                <img class="logo-light" src="
+                                {% if site_settings.logo %}
+                                  {{ site_settings.logo.url }}
+                                {% else %}
+                                  {% static 'images/logo.png' %}
+                                {% endif %}" 
+                                alt="{{ site_settings.name }} logo">
+                                <img class="logo-dark" src="
+                                {% if site_settings.logo %}
+                                  {{ site_settings.logo.url }}
+                                {% else %}
+                                  {% static 'images/logo.png' %}
+                                {% endif %}">
+                            </a>
+                        </div>
+                        <h3 class="text-big">
+                          {% if site_settings.tagline %}
+                            {{ site_settings.tagline }}
+                          {% else %}
+                          Site Tagline not set
+                          {% endif %}
+                        </h3>
+                        <div class="social-icons">
+                            <ul class="social-icon social-default icon-naked mt--20">
+                                {% if social_media.faecbook %}
+                                <li><a href="{{ social_media.faecbook }}">
+                                        <i class="feather-facebook"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if social_media.twitter %}
+                                <li><a href="{{ social_media.twitter}}">
+                                    <i class="feather-twitter"></i>
+                                </a>
+                                </li>
+                                {% endif %}
+                                {% if social_media.instagram %}
+                                <li><a href="{{ social_media.instagram }}">
+                                        <i class="feather-instagram"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if social_media.linkedin %}
+                                <li><a href="{{ social_media.linkedin }}">
+                                        <i class="feather-linkedin"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if social_media.youtube %}
+                                <li><a href="{{ social_media.youtube }}">
+                                        <i class="feather-youtube"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if social_media.snapchat %}
+                                <li><a href="{{ social_media.snapchat }}">
+                                        <i class="feather-snapchat"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                          </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-6 col-12">
+                    <div class="rainbow-footer-widget">
+                        <div class="widget-menu-top">
+                            <h4 class="title">Get Involved</h4>
+                            <div class="inner">
+                                <ul class="footer-link link-hover">
+                                    <li><a href="#">Volunteer</a></li>
+                                    <li><a href="#">Donate</a></li>
+                                    <li><a href="#">Events</a></li>
+                                    <li><a href="{% url 'core:sponsorship' %}">Sponsorship</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="widget-menu-bottom">
+                            <h4 class="title">Legal</h4>
+                            <div class="inner">
+                                <ul class="footer-link link-hover">
+                                    <li><a href="{% url 'core:terms' %}">Terms and Conditions</a></li>
+                                    <li><a href="{% url 'core:privacy' %}">Privacy Policy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-6 col-12">
+                    <div class="rainbow-footer-widget">
+                        <div class="widget-menu-top">
+                            <h4 class="title">About Us</h4>
+                            <div class="inner">
+                                <ul class="footer-link link-hover">
+                                    <li><a href="{% url 'core:about' %}">About</a></li>
+                                    <li><a href="{% url 'core:booster' %}">Booster Club</a></li>
+                                    <li><a href="{% url 'core:contact' %}contact.html">News</a></li>
+                                    <li><a href="{% url 'core:contact' %}">Contact</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="rainbow-footer-widget">
+                        <h4 class="title">Newsletter</h4>
+                        <div class="inner">
+                            <h6 class="subtitle">Stay informed about {{ site_settings.name }}</h6>
+                            <form class="newsletter-form" action="#">
+                                <div class="form-group">
+                                    <input type="email" placeholder="Enter Your Email Here">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn-default" type="submit">Submit Now</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

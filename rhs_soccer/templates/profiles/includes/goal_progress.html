@@ -1,0 +1,10 @@
+{% load i18n humanize %}
+<div class="single-progress large-size  no-radius">
+    <h6 class="title">{{ player.profile.user.first_name }} Team's Progress</h6>
+    <p>$<strong>{{ raised|intcomma  }}</strong> raised of $<strong>{{ goal|intcomma }}</strong> team goal</p>
+    <div class="progress">
+        <div class="progress-bar wow fadeInLeft" data-wow-duration="0.5s" data-wow-delay=".3s" role="progressbar" style="width: {{ percentage  }}%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">
+        </div>
+        {% comment %} <span class="progress-number"><strong>{{ percentage|floatformat:0|intcomma }}</strong>%</span> {% endcomment %}
+    </div>
+</div>

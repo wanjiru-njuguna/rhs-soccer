@@ -1,0 +1,29 @@
+{% load static %}
+{% load solo_tags %}
+{% get_solo 'core.SiteSettings' as site_settings %}
+
+<div class="rainbow-callto-action clltoaction-style-player style-3">
+    <div class="row row--0 align-items-center content-wrapper">
+        <div class="col-lg-8">
+            <div class="inner">
+                <div class="content text-left">
+                    <h3 class="title" data-sal="slide-up" data-sal-duration="400" data-sal-delay="200">Would you help {{ player.profile.user.first_name }}'s Team
+                        {% if site_settings.fund_raising_mode %}
+                        reach their fund raising goal
+                        {% endif %}?
+                        </h3>
+                    {% if site_settings.fund_raising_mode  %}
+                    {% include 'profiles/includes/goal_progress.html' %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="call-to-btn text-start text-lg-end" data-sal="slide-up" data-sal-duration="400" data-sal-delay="400">
+                <a class="btn-default" href="#">
+                    DONATE
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

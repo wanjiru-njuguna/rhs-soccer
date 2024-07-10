@@ -1,0 +1,70 @@
+{% load static solo_tags %}
+{% get_solo 'core.SiteSettings' as site_settings %}
+
+<header class="rainbow-header header-default header-not-transparent header-sticky">
+    <div class="container position-relative">
+        <div class="row align-items-center row--0">
+            <div class="col-lg-3 col-md-6 col-4">
+                <div class="logo">
+                        <a href="{% url 'core:home' %}">
+                            <img class="logo-light" src="{% if site_settings.logo %}
+                                                        {{ site_settings.logo.url }}
+                                                        {% else %}
+                                                        {% static 'images/logo.png' %}
+                                                        {% endif %}" alt="Corporate Logo">
+                            <img class="logo-dark" src="{% if site_settings.logo %}
+                                                        {{ site_settings.logo.url }}
+                                                        {% else %}
+                                                        {% static 'images/logo.png' %}
+                                                        {% endif %}" alt="{{ site_settings.name}} logo">
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-6 col-8 position-static">
+                <div class="header-right">
+
+                    <nav class="mainmenu-nav d-none d-lg-block">
+                        <ul class="mainmenu">
+                            <li><a href="{% url 'teams:team_page' %}">Teams</a></li>
+                            <li><a href="{% url 'profiles:players' %}">Players</a></li>
+                            <li><a href="{% url 'matches:matches' %}">Matches</a>
+                            <li><a href="{% url 'events:events' %}">Events</a></li>
+                        </ul>
+                    </nav>
+
+                    <!-- Start Header Btn  -->
+                    <div class="header-btn">
+                        <a class="btn-default btn-small round" target="_blank" href="#">DONATE</a>
+                    </div>
+                    <!-- End Header Btn  -->
+
+                    <!-- Start Mobile-Menu-Bar -->
+                    <div class="mobile-menu-bar ml--5 d-block d-lg-none">
+                        <div class="hamberger">
+                            <button class="hamberger-button">
+                                <i class="feather-menu"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Start Mobile-Menu-Bar -->
+
+                    <div id="my_switcher" class="my_switcher">
+                        <ul>
+                            <li>
+                                <a href="javascript: void(0);" data-theme="light" class="setColor light">
+                                    <img class="sun-image" src="{% static 'images/icons/sun-01.svg' %}" alt="Sun images">
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);" data-theme="dark" class="setColor dark">
+                                    <img class="Victor Image" src="{% static 'images/icons/vector.svg' %}" alt="Vector Images">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

@@ -1,0 +1,73 @@
+{% load static %}
+<div class="rainbow-split-area rainbow-section-gap">
+    <div class="wrapper">
+        <div class="row">
+            <div class="col-lg-12 mb--40">
+                <div class="section-title text-center" data-sal="slide-up" data-sal-duration="400" data-sal-delay="150">
+                    <h4 class="subtitle "><span class="theme-gradient">Event</span></h4>
+                    <h2 class="title w-600 mb--20">{{ event.title }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="rainbow-splite-style">
+            <div class="split-wrapper">
+                <div class="row g-0 radius-10 align-items-center">
+                    <div class="col-lg-12 col-xl-6 col-12">
+                        <div class="thumbnail">
+                            <img src="
+                            {% if event.image %}
+                                {{ event.image.url }}
+                            {% else %}
+                                {% static 'images/defaults/blog_list_header_390x240.png' %}
+                            {% endif %}" alt="{{ event.title }}" alt="{{ event.title }} picture">
+                        </div>
+                    </div>
+                    <div class="col-lg-12 col-xl-6 col-12">
+                        <div class="split-inner">
+                            {% comment %} <h4 class="title" data-sal="slide-up" data-sal-duration="400" data-sal-delay="200">{{ event.title }}<</h4> {% endcomment %}
+                            <p class="description" data-sal="slide-up" data-sal-duration="400" data-sal-delay="300">{{ event.description|safe }}</p>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="count-box counter-style-4 text-left">
+                                        <div>
+                                            <div class="count-number"><span class="counter">{{ attendee_count }}</span></div>
+                                        </div>
+                                        <h5 class="counter-title">Attending</h5>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="count-box counter-style-4 text-left">
+                                        <div>
+                                            <div class="count-number"><span class="counter">{{ event.volunteers_needed }}</span></div>
+                                        </div>
+                                        <h5 class="counter-title">Voluteers Needed</h5>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="count-box counter-style-4 text-left">
+                                        <div>
+                                            <div class="count-number"><span class="counter">{{ volunteer_count }}</span></div>
+                                        </div>
+                                        <h5 class="counter-title">Volunteered</h5>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="count-box counter-style-4 text-left">
+                                        <div>
+                                            <div class="count-number"><span class="counter">{{ volunteers_still_needed }}</span></div>
+                                        </div>
+                                        <h5 class="counter-title">Volunteers Still Needed</h5>
+                                    </div>
+                                </div>
+                                {% if volunteers_still_needed > 0 %}
+                                {% include 'events/includes/btn_volunteer_now.html' %}
+                                {% endif %}
+                                {% include 'events/includes/btn_attend_now.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

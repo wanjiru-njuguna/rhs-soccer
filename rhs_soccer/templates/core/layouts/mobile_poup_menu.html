@@ -1,0 +1,58 @@
+{% load static %}
+
+<div class="popup-mobile-menu">
+    <div class="inner">
+        <div class="header-top">
+            <div class="logo">
+                <a href="{% url 'core:home' %}">
+                    <img class="logo-light" src="{% if site_settings.logo %}
+                                                {{ site_settings.logo.url }}
+                                                {% else %}
+                                                {% static 'images/logo.png' %}
+                                                {% endif %}" alt="Corporate Logo">
+                    <img class="logo-dark" src="{% if site_settings.logo %}
+                                                {{ site_settings.logo.url }}
+                                                {% else %}
+                                                {% static 'images/logo.png' %}
+                                                {% endif %}" alt="{{ site_settings.name}} logo">
+                </a>
+            </div>
+            <div class="close-menu">
+                <button class="close-button">
+                    <i class="feather-x"></i>
+                </button>
+            </div>
+        </div>
+        <ul class="mainmenu">
+            <li class="with-megamenu has-menu-child-item position-relative"><a href="#">Teams</a>
+                <div class="rainbow-megamenu with-mega-item-2">
+                    <div class="wrapper">
+                        <div class="row row--0">
+                            <div class="col-lg-6 single-mega-item">
+                                <ul class="mega-menu-item">
+                                    <li><a href="#">Varsity</a></li>
+                                    <li><a href="#">JV</a></li>
+                                    <li><a href="#">Sophomore</a></li>
+                                    <li><a href="#">Freshman</a></li>        
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li><a href="#">Players</a></li>
+            <li class="with-megamenu has-menu-child-item position-relative"><a href="#">Matches</a>
+                <div class="rainbow-megamenu with-mega-item-2">
+                    <div class="wrapper">
+                        <div class="row row--0">
+                            <div class="col-lg-6 single-mega-item">
+                                <ul class="mega-menu-item">
+                                    <li><a href="#l">Varsity</a></li>
+                                    <li><a href="#">JV</a></li>
+                                    <li><a href="#">Sophomore</a></li>
+                                    <li><a href="#">Freshman</a></li>
+                                </ul>
+            <li><a href="#">Events</a></li>
+        </ul>
+    </div>
+</div>

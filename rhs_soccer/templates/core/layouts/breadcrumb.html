@@ -1,0 +1,20 @@
+<div class="breadcrumb-area breadcarumb-style-1 ptb--120">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb-inner text-center">
+                    <h1 class="title theme-gradient h2">{{ title }} <br /> <small>{{ subtitle }}</small></h1>
+                    <ul class="page-list">
+                        <li class="rainbow-breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+                        {% if page_title %}
+                        <li class="rainbow-breadcrumb-item"><a href="">Teams</a></li>
+                        <li class="rainbow-breadcrumb-item active">{{ page_title }}</li>
+                        {% else %}
+                        <li class="rainbow-breadcrumb-item active">{{ title }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
