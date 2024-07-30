@@ -5,15 +5,19 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
-from tinymce.models import HTMLField
+
+from modelcluster.models import ClusterableModel
+from wagtail.snippets.models import register_snippet
+from wagtail.fields import RichTextField
+from wagtail.admin.panels import FieldPanel
 
 from rhs_soccer.matches.managers import MatchManager
 from rhs_soccer.teams.models import Team
 from rhs_soccer.matches.enums import MatchHighlight
 from rhs_soccer.utils.common.enums import UsStates
 
-
-class Venue(models.Model):
+@register_snippet
+class Venue(ClusterableModel):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     address = models.CharField(max_length=255, verbose_name=_("Address"))
@@ -28,8 +32,20 @@ class Venue(models.Model):
     phone = PhoneNumberField(verbose_name=_("Phone"))
     email = models.EmailField(verbose_name=_("Email"))
     website = models.URLField(verbose_name=_("Website"))
-    description = HTMLField(verbose_name=_("Description"))
+    description = RichTextField(verbose_name=_("Description"))
+    panels = [
+        FieldPanel('uuid'),
+        FieldPanel('name'),
+        FieldPanel('address'),
+        FieldPanel('city'),
+        FieldPanel('state'),
+        FieldPanel('zip_code'),
+        FieldPanel('phone'),
+        FieldPanel('email'),
+        FieldPanel('website'),
+        FieldPanel('description'),
 
+    ]
     class Meta:
         verbose_name = _("Venue")
         verbose_name_plural = _("Venues")
@@ -37,8 +53,8 @@ class Venue(models.Model):
     def __str__(self) -> str:
         return self.name
 
-
-class Match(models.Model):
+@register_snippet
+class Match(ClusterableModel):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     home_team = models.ForeignKey(
         Team,
@@ -59,7 +75,7 @@ class Match(models.Model):
         limit_choices_to={"home_team": False},
     )
     venue = models.ForeignKey(
-        Venue,
+        'Venue',
         on_delete=models.CASCADE,
         verbose_name=_("Venue"),
         related_name="venue",
@@ -106,7 +122,24 @@ class Match(models.Model):
     is_active = models.BooleanField(verbose_name=_("Is Active"), default=True)
 
     objects = MatchManager()
-
+    panels = [
+        FieldPanel('uuid'),
+        FieldPanel('home_team'),
+        FieldPanel('away_team'),
+        FieldPanel('venue'),
+        FieldPanel('date'),
+        FieldPanel('time'),
+        FieldPanel('regulation_time'),
+        FieldPanel('is_overtime'),
+        FieldPanel('is_postponed'),
+        FieldPanel('is_canceled'),
+        FieldPanel('is_penalty_shootout'),
+        FieldPanel('home_team_score'),
+        FieldPanel('away_team_score'),
+        FieldPanel('summary'),
+        FieldPanel('highlights'),
+        FieldPanel('is_active'),
+    ]
     class Meta:
         verbose_name = _("Match")
         verbose_name_plural = _("Matches")
@@ -126,8 +159,8 @@ class Match(models.Model):
     def is_today(self):
         return self.date == timezone.now().date() and self.is_active
 
-
-class Highlight(models.Model):
+@register_snippet
+class Highlight(ClusterableModel):
     highlight = models.CharField(
         max_length=50,
         choices=MatchHighlight.choices(),
@@ -142,7 +175,10 @@ class Highlight(models.Model):
         related_name="highlights",
         blank=True,
     )
-
+    panels = [
+        FieldPanel('highlight'),
+        FieldPanel('player'),
+    ]
     class Meta:
         verbose_name = _("Match Highlight")
         verbose_name_plural = _("Match Highlights")

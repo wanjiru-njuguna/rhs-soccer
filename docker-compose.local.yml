@@ -33,7 +33,10 @@ services:
       - rhs_soccer_local_postgres_data:/var/lib/postgresql/data
       - rhs_soccer_local_postgres_data_backups:/backups
     env_file:
-      - ./.envs/.local/.postgres
+      #- ./.envs/.local/.postgres
+      - .envs/.local/.django
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.local
 
   mailpit:
     image: docker.io/axllent/mailpit:latest

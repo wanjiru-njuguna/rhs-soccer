@@ -20,6 +20,8 @@ services:
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.production
     command: /start
 
   postgres:

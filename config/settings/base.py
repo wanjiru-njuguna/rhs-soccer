@@ -2,23 +2,31 @@
 """Base settings to build other settings files upon."""
 
 from pathlib import Path
+from dotenv import load_dotenv
 
 import environ
+import os
 
+
+load_dotenv()
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # rhs_soccer/
 APPS_DIR = BASE_DIR / "rhs_soccer"
 env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.envs/.local/.django'))
 
-READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
-if READ_DOT_ENV_FILE:
-    # OS environment variables take precedence over variables from .env
-    env.read_env(str(BASE_DIR / ".env"))
+# READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
+# if READ_DOT_ENV_FILE:
+#     # OS environment variables take precedence over variables from .env
+#     env.read_env(str(BASE_DIR / ".env"))
 
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool("DJANGO_DEBUG", False)
+SECRET_KEY = env("SECRET_KEY")
+#wagtail_setting
+WAGTAILADMIN_BASE_URL = env('WAGTAILADMIN_BASE_URL', default='http://localhost:8000')
 # Local time zone. Choices are
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # though not all of them may be available with every OS.
@@ -45,8 +53,13 @@ LOCALE_PATHS = [str(BASE_DIR / "locale")]
 # DATABASES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {"default": env.db("DATABASE_URL")}
+#DATABASES = {"default": env.db("DATABASE_URL")}
+DATABASES = {
+    'default': env.db(),
+}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
+#print(env('DATABASE_URL'))
+
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -69,6 +82,20 @@ DJANGO_APPS = [
     "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
+    # wagtail
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail',
+    'modelcluster',
+    'taggit',
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
@@ -142,7 +169,7 @@ AUTH_PASSWORD_VALIDATORS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
+    #"django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

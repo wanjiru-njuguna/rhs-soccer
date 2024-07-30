@@ -4,16 +4,24 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from solo.models import SingletonModel
-from tinymce.models import HTMLField
+
+from wagtail.models import Page
+from wagtail.admin.panels import FieldPanel
+from wagtail.fields import RichTextField
+from wagtail.snippets.models import register_snippet
+from modelcluster.models import ClusterableModel
 
 from rhs_soccer.core.enums import DificultyLevel
 from rhs_soccer.core.enums import OfficerPosition
 from rhs_soccer.core.enums import SponsorshipLevel
 from rhs_soccer.utils.common import file_cleanup
+from rhs_soccer.utils.common.singelton_page import SingletonPage
+
 from rhs_soccer.utils.common.enums import UsStates
 from rhs_soccer.utils.helpers.models import TimeStamp
 
 
+@register_snippet
 class Address(SingletonModel):
     address = models.CharField(max_length=255, verbose_name=_("Address"))
     address2 = models.CharField(
@@ -29,6 +37,14 @@ class Address(SingletonModel):
     )
     zip_code = models.CharField(max_length=255, verbose_name=_("Zip Code"))
 
+    panels = [
+        FieldPanel('address'),
+        FieldPanel('address2'),
+        FieldPanel('city'),
+        FieldPanel('state'),
+        FieldPanel('zip_code'),
+    ]
+
     class Meta:
         verbose_name = _("Address")
         verbose_name_plural = _("Addresses")
@@ -36,40 +52,45 @@ class Address(SingletonModel):
     def __str__(self) -> str:
         return self.address
 
-
+@register_snippet
 class SiteSettings(SingletonModel):
-    name = models.CharField(max_length=255, verbose_name=_("Name"))
-    short_name = models.CharField(max_length=50, verbose_name=_("Short Name"))
+    name = models.CharField(max_length=255, verbose_name=_("Name"), blank=True)
+    short_name = models.CharField(max_length=50, verbose_name=_("Short Name"), blank=True)
     tagline = models.CharField(max_length=255, verbose_name=_("Tagline"), blank=True)
-    logo = models.ImageField(
-        upload_to="site_assets",
+    logo = models.ForeignKey(
+        'wagtailimages.Image',
         verbose_name=_("Logo"),
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
+        related_name = "+"
     )
-    dark_logo = models.ImageField(
-        upload_to="site_assets",
+    dark_logo = models.ForeignKey(
+        'wagtailimages.Image',
         verbose_name=_("Dark Logo"),
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
+        related_name = "+"
     )
-    favicon = models.ImageField(
-        upload_to="site_assets",
+    favicon = models.ForeignKey(
+        'wagtailimages.Image',
         verbose_name=_("Favicon"),
         blank=True,
         null=True,
+        on_delete=models.SET_NULL,
     )
     phone = PhoneNumberField(max_length=255, verbose_name=_("Phone"))
     email = models.CharField(max_length=255, verbose_name=_("Email"))
     address = models.ForeignKey(
-        Address,
+        'Address',
         on_delete=models.SET_NULL,
         related_name="site_address",
         blank=True,
         null=True,
     )
     social_media = models.OneToOneField(
-        "SocialMedia",
+        'SocialMedia',
         blank=True,
         null=True,
         verbose_name=_("Social Media"),
@@ -80,30 +101,51 @@ class SiteSettings(SingletonModel):
     keywords = models.TextField(verbose_name=_("Keywords"), blank=True)
     fund_raising_mode = models.BooleanField(_("Fund Raising Mode"), default=False)
 
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('short_name'),
+        FieldPanel('tagline'),
+        FieldPanel('logo'),
+        FieldPanel('dark_logo'),
+        FieldPanel('favicon'),
+        FieldPanel('phone'),
+        FieldPanel('email'),
+        FieldPanel('address'),
+        FieldPanel('social_media'),
+        FieldPanel('description'),
+        FieldPanel('keywords'),
+        FieldPanel('fund_raising_mode'),
+    ]
+
     class Meta:
         verbose_name = _("Site Settings")
         verbose_name_plural = _("Site Settings")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-file_cleanup.delete_file_on_model_delete(SiteSettings, "logo")
-file_cleanup.delete_file_on_model_delete(SiteSettings, "favicon")
-file_cleanup.delete_file_on_model_delete(SiteSettings, "dark_logo")
-
-
+@register_snippet
 class SocialMedia(SingletonModel):
     site = models.ForeignKey(
-        "SiteSettings",
+        'SiteSettings',
         on_delete=models.CASCADE,
         verbose_name=_("Site"),
         related_name="social_media_site",
     )
-    faecbook = models.URLField(verbose_name=_("Facebook URL"), blank=True)
+    facebook = models.URLField(verbose_name=_("Facebook URL"), blank=True)
     twitter = models.URLField(verbose_name=_("Twitter URL"), blank=True)
     instagram = models.URLField(verbose_name=_("Instagram URL"), blank=True)
     linkedin = models.URLField(verbose_name=_("LinkedIn URL"), blank=True)
     youtube = models.URLField(verbose_name=_("YouTube URL"), blank=True)
+
+    panels = [
+        FieldPanel('site'),
+        FieldPanel('facebook'),
+        FieldPanel('twitter'),
+        FieldPanel('instagram'),
+        FieldPanel('linkedin'),
+        FieldPanel('youtube'),
+    ]
 
     class Meta:
         verbose_name = _("Social Media")
@@ -112,18 +154,25 @@ class SocialMedia(SingletonModel):
     def __str__(self):
         return f"{self.site.name} Social Media"
 
-
-class AboutPage(TimeStamp, SingletonModel):
-    title = models.CharField(max_length=255, verbose_name=_("Title"))
+class AboutPage(Page):
     subtitle = models.CharField(max_length=255, verbose_name=_("Subtitle"), blank=True)
-    content = HTMLField(verbose_name=_("Content"))
-    image = models.ImageField(
-        upload_to="pages",
-        verbose_name=_("Image"),
-        blank=True,
+    content = RichTextField(verbose_name=_("Content"), blank=True)
+    image = models.ForeignKey(
+        'wagtailimages.Image',
         null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
         help_text=_("Image size should be 1920 x 1080"),
     )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    content_panels = Page.content_panels + [
+        FieldPanel('subtitle'),
+        FieldPanel('content'),
+        FieldPanel('image'),
+    ]
 
     class Meta:
         verbose_name = _("About Page")
@@ -132,18 +181,27 @@ class AboutPage(TimeStamp, SingletonModel):
     def __str__(self) -> str:
         return self.title
 
-file_cleanup.delete_file_on_model_delete(AboutPage, "image")
-
-
-class ContactPage(TimeStamp, SingletonModel):
-    title = models.CharField(max_length=255, verbose_name=_("Title"))
+class ContactPage(Page):
+   # title = models.CharField(max_length=255, verbose_name=_("Title"))
     subtitle = models.CharField(max_length=255, verbose_name=_("Subtitle"))
-    image = models.ImageField(
-        upload_to="pages",
-        verbose_name=_("Image"),
-        blank=True,
+    image = models.ForeignKey(
+        'wagtailimages.Image',
         null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name=_("Image")
     )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    content_panels = Page.content_panels + [
+        FieldPanel('title'),
+        FieldPanel('subtitle'),
+        FieldPanel('image'),
+       
+
+    ]
 
     class Meta:
         verbose_name = _("Contact Page")
@@ -152,15 +210,24 @@ class ContactPage(TimeStamp, SingletonModel):
     def __str__(self) -> str:
         return self.title
 
-file_cleanup.delete_file_on_model_delete(ContactPage, "image")
-
-
-class Contact(TimeStamp):
+@register_snippet
+class Contact(ClusterableModel):
     first_name = models.CharField(max_length=255, verbose_name=_("First Name"))
     last_name = models.CharField(max_length=255, verbose_name=_("Last Name"))
     email = models.EmailField(verbose_name=_("Email"))
     phone = PhoneNumberField(verbose_name=_("Phone"), blank=True)
     message = models.TextField(verbose_name=_("Message"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
+
+    panels = [
+        FieldPanel('first_name'),
+        FieldPanel('last_name'),
+        FieldPanel('email'),
+        FieldPanel('phone'),
+        FieldPanel('message'),
+        
+    ]
 
     class Meta:
         verbose_name = _("Contact")
@@ -170,12 +237,16 @@ class Contact(TimeStamp):
         return self.email
 
 
-class PrivacyPolicyPage(TimeStamp, SingletonModel):
-    title = models.CharField(max_length=255, verbose_name=_("Title"))
+class PrivacyPolicyPage(SingletonPage):
     subtitle = models.CharField(max_length=255, verbose_name=_("Subtitle"), blank=True)
-    content = HTMLField(verbose_name=_("Content"))
+    content = RichTextField(verbose_name=_("Content"))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+
+    content_panels = Page.content_panels + [
+        FieldPanel('subtitle'),
+        FieldPanel('content'),
+    ]
 
     class Meta:
         verbose_name = _("Privacy Policy Page")
@@ -185,10 +256,19 @@ class PrivacyPolicyPage(TimeStamp, SingletonModel):
         return self.title
 
 
-class TermsOfServicePage(TimeStamp, SingletonModel):
-    title = models.CharField(max_length=255, verbose_name=_("Title"))
+class TermsOfServicePage(SingletonPage):
+    #title = models.CharField(max_length=255, verbose_name=_("Title"))
     subtitle = models.CharField(max_length=255, verbose_name=_("Subtitle"), blank=True)
-    content = HTMLField(verbose_name=_("Content"))
+    content = RichTextField(verbose_name=_("Content"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+
+    content_panels = Page.content_panels + [
+        FieldPanel('title'),
+        FieldPanel('subtitle'),
+        FieldPanel('content'),
+    ]
+
 
     class Meta:
         verbose_name = _("Terms of Service Page")
@@ -197,18 +277,27 @@ class TermsOfServicePage(TimeStamp, SingletonModel):
     def __str__(self) -> str:
         return self.title
 
-
-class BoosterPage(SingletonModel):
-    title = models.CharField(max_length=255, verbose_name=_("Title"))
+class BoosterPage(SingletonPage):
+    #title = models.CharField(max_length=255, verbose_name=_("Title"))
     subtitle = models.CharField(max_length=255, verbose_name=_("Subtitle"), blank=True)
     heading = models.CharField(max_length=255, verbose_name=_("Heading"))
-    content = HTMLField(verbose_name=_("Content"))
-    image = models.ImageField(
-        upload_to="pages",
-        verbose_name=_("Image"),
-        blank=True,
+    content = RichTextField(verbose_name=_("Content"))
+    image = models.ForeignKey(
+       'wagtailimages.Image',
         null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name=_("Image")
     )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created At"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+    content_panels = Page.content_panels + [
+        FieldPanel('subtitle'),
+        FieldPanel('heading'),
+        FieldPanel('content'),
+        FieldPanel('image'),
+    ]
 
     class Meta:
         verbose_name = _("Booster Page")
@@ -219,8 +308,8 @@ class BoosterPage(SingletonModel):
 
 file_cleanup.delete_file_on_model_delete(BoosterPage, "image")
 
-
-class BoosterOfficer(models.Model):
+@register_snippet
+class BoosterOfficer(ClusterableModel):
     first_name = models.CharField(max_length=255, verbose_name=_("First Name"))
     last_name = models.CharField(max_length=255, verbose_name=_("Last Name"))
     title = models.CharField(
@@ -229,15 +318,26 @@ class BoosterOfficer(models.Model):
         choices=OfficerPosition.choices(),
         blank=True)
     email = models.EmailField(verbose_name=_("Email"))
-    phone = models.CharField(max_length=255, verbose_name=_("Phone"))
-    image = models.ImageField(
-        upload_to="pages",
-        verbose_name=_("Image"),
-        blank=True,
+    phone = PhoneNumberField(max_length=255, verbose_name=_("Phone"))
+    image = models.ForeignKey(
+        'wagtailimages.Image',
         null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name=_("Image")
     )
-    bio = HTMLField(verbose_name=_("Bio"), blank=True)
+    bio = RichTextField(verbose_name=_("Bio"), blank=True)
 
+    panels = [
+        FieldPanel('first_name'),
+        FieldPanel('last_name'),
+        FieldPanel('title'),
+        FieldPanel('email'),
+        FieldPanel('phone'),
+        FieldPanel('image'),
+        FieldPanel('bio'),
+    ]
     class Meta:
         verbose_name = _("Booster Officer")
         verbose_name_plural = _("Booster Officers")
@@ -248,20 +348,28 @@ class BoosterOfficer(models.Model):
 file_cleanup.delete_file_on_model_delete(BoosterOfficer, "image")
 
 
-class SponsorPage(SingletonModel):
-    title = models.CharField(max_length=255, verbose_name=_("Title"))
+class SponsorPage(SingletonPage):
+    #title = models.CharField(max_length=255, verbose_name=_("Title"))
     subtitle = models.CharField(max_length=255, verbose_name=_("Subtitle"), blank=True)
-    heading = models.CharField(max_length=255, verbose_name=_("Heading"))
-    content = HTMLField(verbose_name=_("Content"))
-    cta = models.CharField(max_length=255, verbose_name=_("Call to Action"))
-    image = models.ImageField(
-        upload_to="pages",
+    heading = models.CharField(max_length=255, verbose_name=_("Heading"), blank=True)
+    content = RichTextField(verbose_name=_("Content"), blank=True)
+    cta = models.CharField(max_length=255, verbose_name=_("Call to Action"), blank=True)
+    image = models.ForeignKey(
+       'wagtailimages.Image',
         verbose_name=_("Image"),
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
         help_text=_("Image size should be 1920 x 1080"),
     )
-
+    content_panels = Page.content_panels + [
+        FieldPanel('title'),
+        FieldPanel('subtitle'),
+        FieldPanel('heading'),
+        FieldPanel('content'),
+        FieldPanel('cta'),
+        FieldPanel('image'),
+    ]
     class Meta:
         verbose_name = _("Sponsor Page")
         verbose_name_plural = _("Sponsor Page")
@@ -271,21 +379,29 @@ class SponsorPage(SingletonModel):
 
 file_cleanup.delete_file_on_model_delete(SponsorPage, "image")
 
-
-class Sponsor(TimeStamp):
+@register_snippet
+class Sponsor(TimeStamp, ClusterableModel):
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     level = models.CharField(
         max_length=255,
         verbose_name=_("Sponsorship Level"),
         choices=SponsorshipLevel.choices(),
     )
-    logo = models.ImageField(
-        upload_to="sponsors",
-        verbose_name=_("Image"),
-        blank=True,
+    logo = models.ForeignKey(
+        'wagtailimages.Image',
         null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name=_("Image")
     )
     url = models.URLField(verbose_name=_("URL"), blank=True)
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('level'),
+        FieldPanel('logo'),
+        FieldPanel('url'),
+    ]
 
     class Meta:
         verbose_name = _("Sponsor")
@@ -296,28 +412,39 @@ class Sponsor(TimeStamp):
 
 file_cleanup.delete_file_on_model_delete(Sponsor, "logo")
 
-
-class SponsorshipPackage(models.Model):
+@register_snippet
+class SponsorshipPackage(ClusterableModel):
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     level = models.CharField(
         max_length=255,
         verbose_name=_("Sponsorship Level"),
         choices=SponsorshipLevel.choices(),
     )
-    description = models.TextField(verbose_name=_("Description"))
+    description = RichTextField(verbose_name=_("Description"))
     price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         verbose_name=_("Price"),
     )
-    image = models.ImageField(
-        upload_to="sponsors",
-        verbose_name=_("Image"),
-        blank=True,
+    image = models.ForeignKey(
+        'wagtailimages.Image',
         null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        verbose_name=_("Image")
     )
     order = models.PositiveIntegerField(verbose_name=_("Order"), default=0)
     featured = models.BooleanField(verbose_name=_("Featured"), default=False)
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('level'),
+        FieldPanel('description'),
+        FieldPanel('price'),
+        FieldPanel('image'),
+        FieldPanel('order'),
+        FieldPanel('featured'),
+    ]
 
     class Meta:
         verbose_name = _("Sponsorship Package")
@@ -330,8 +457,8 @@ class SponsorshipPackage(models.Model):
 
 file_cleanup.delete_file_on_model_delete(SponsorshipPackage, "image")
 
-
-class SponsorshipApplication(TimeStamp):
+@register_snippet
+class SponsorshipApplication(TimeStamp, ClusterableModel):
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     email = models.EmailField(verbose_name=_("Email"))
     phone = PhoneNumberField(verbose_name=_("Phone"))
@@ -350,20 +477,33 @@ class SponsorshipApplication(TimeStamp):
         related_name="package",
     )
     accepted = models.BooleanField(verbose_name=_("Accepted"), default=False)
-
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('email'),
+        FieldPanel('phone'),
+        FieldPanel('company'),
+        FieldPanel('website'),
+        FieldPanel('level'),
+        FieldPanel('message'),
+        FieldPanel('package'),
+        FieldPanel('accepted'),
+    ]
     class Meta:
         verbose_name = _("Sponsorship Application")
         verbose_name_plural = _("Sponsorship Applications")
 
     def __str__(self) -> str:
         return self.name
-
-class ResourceCategory(models.Model):
+@register_snippet
+class ResourceCategory(ClusterableModel):
     name = models.CharField(max_length=255, verbose_name=_("Name"))
     description = models.TextField(verbose_name=_("Description"), blank=True)
     created_date = models.DateTimeField(auto_now_add=True, verbose_name=_("Created Date"))
     updated_date = models.DateTimeField(auto_now=True, verbose_name=_("Updated"))
-
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('description'),
+    ]
     class Meta:
         verbose_name = _("Resource Category")
         verbose_name_plural = _("Resource Categories")
@@ -371,8 +511,8 @@ class ResourceCategory(models.Model):
 
     def __str__(self) -> str:
         return self.name
-
-class Resource(models.Model):
+@register_snippet
+class Resource(ClusterableModel):
     category = models.ForeignKey(
         ResourceCategory,
         on_delete=models.CASCADE,
@@ -389,10 +529,19 @@ class Resource(models.Model):
         default=DificultyLevel.EASY,
     )
     slug = models.SlugField(max_length=255, verbose_name=_("Slug"), unique=True, editable=False)
-    description = HTMLField(verbose_name=_("Description"), blank=True)
+    description = RichTextField(verbose_name=_("Description"), blank=True)
     video = models.URLField(verbose_name=_("Video"), blank=True)
     created_date = models.DateTimeField(auto_now_add=True, verbose_name=_("Created Date"))
     updated_date = models.DateTimeField(auto_now=True, verbose_name=_("Updated"))
+    panels = [
+        FieldPanel('category'),
+        FieldPanel('uuid'),
+        FieldPanel('title'),
+        FieldPanel('difficulty'),
+        FieldPanel('slug'),
+        FieldPanel('description'),
+        FieldPanel('video'),
+    ]
 
     class Meta:
         verbose_name = _("Resource")
