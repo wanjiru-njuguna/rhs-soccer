@@ -1,8 +1,9 @@
 from allauth.account.decorators import secure_admin_login
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.auth import admin as auth_admin
+#from django.contrib.auth import admin as auth_admin
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .forms import UserAdminChangeForm
 from .forms import UserAdminCreationForm
@@ -16,7 +17,7 @@ if settings.DJANGO_ADMIN_FORCE_ALLAUTH:
 
 
 @admin.register(User)
-class UserAdmin(auth_admin.UserAdmin):
+class UserAdmin(BaseUserAdmin):
     form = UserAdminChangeForm
     add_form = UserAdminCreationForm
     fieldsets = (
@@ -48,6 +49,7 @@ class UserAdmin(auth_admin.UserAdmin):
     search_fields = [
         "first_name",
         "last_name",
+        "email"
     ]
     list_editable = ["role"]
     list_filter = ["role"]
@@ -57,7 +59,7 @@ class UserAdmin(auth_admin.UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("email", "role", "password1", "password2"),
+                "fields": ("email", "role", "password1", "password2", "first_name", "last_name"),
             },
         ),
     )

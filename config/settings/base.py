@@ -110,6 +110,7 @@ THIRD_PARTY_APPS = [
     "phonenumber_field",
     "django_recaptcha",
     "widget_tweaks",
+    
 ]
 
 LOCAL_APPS = [
@@ -172,10 +173,12 @@ MIDDLEWARE = [
     #"django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    #"debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+   
 ]
 
 # STATIC

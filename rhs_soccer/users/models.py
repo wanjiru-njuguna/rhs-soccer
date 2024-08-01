@@ -22,8 +22,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # First and last name do not cover name patterns around the globe
     #id = models.UUIDField(default=uuid.uuid4, primary_key = True, editable=False, unique=True)    
-    first_name = CharField(_("first name"), max_length=30, blank = True)
-    last_name = CharField(_("last name"), max_length=30, blank = True)
+    first_name = CharField(_("first name"), max_length=30, blank = True, null = True)
+    last_name = CharField(_("last name"), max_length=30, blank = True,  null = True)
     email = EmailField(_("email address"), unique=True)
     role = CharField(
         _("Role"),
